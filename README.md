@@ -1,4 +1,4 @@
-# PLPLOTLIB
+# PlPlotLib
 
 <div align="center">
 <img src="doc/logo.svg" alt="PlPlotLib" width="100">
@@ -17,14 +17,14 @@ especially for students in numerical analysis courses based on Fortran.
 
 Documentation can be found [here](http://hornekyle.github.io/PlPlotLib).
 
-## Get started
+## Get Started
 
 ### Supported Compilers
 
 The following combinations are supported:
 
 |Name|Vesrion|Platform|Architecture|  
-|---|---|---|---|  
+|:-:|:-:|:-:|:-:|  
 |GCC Fortran(MSYS2)|11|Windows 10|x86_64|
 
 ### Dependencies
@@ -36,7 +36,7 @@ The following combinations are supported:
 #### Build Environment in MSYS2
 
 ```sh
-pacman -S ucrt64/mingw-w64-ucrt-x86_64-plplot
+pacman -S ucrt64/mingw-w64-ucrt-x86_64-PlPlot
 pacman -S ucrt64/mingw-w64-ucrt-x86_64-libgd
 ```
 
@@ -64,7 +64,7 @@ program logo_prg
         !! Create the project logo
     use kinds_mod
     use utilities_mod
-    use plplotlib_mod
+    use PlPlotlib_mod
     implicit none
 
     call setup(device='svg', fileName='build/logo-%n.svg', figSize=[600, 500])
@@ -97,15 +97,17 @@ contains
 end program logo_prg
 ```
 
-![logo-1](doc/logo-1.svg)
+<div align="center">
+<img src="doc/logo-1.svg" alt="PlPlotLib" width="600">
+</div>
 
 ## Links
 
-- [PlPlot](http://plplot.sourceforge.net/)
+- [PlPlot](http://PlPlot.sourceforge.net/)
 - [hornekyle/PlPlotLib](https://github.com/hornekyle/PlPlotLib) 
 
-Thanks to PLPLOT written by Alan W. Irwin and other contributors.<br>
-Thanks to the Fortran interface of PLPLOT written by Arjen Markus.<br>
-Thanks to the PlPlotLib high-level interfaces written by Dr Kyle Horne.
+Thanks to `PlPlot` written by Alan W. Irwin and other contributors.<br>
+Thanks to the Fortran interface of `PlPlot` written by Arjen Markus.<br>
+Thanks to the `PlPlotLib` high-level interfaces written by Dr Kyle Horne.
 
 Thanks for your all contributions. Salute!

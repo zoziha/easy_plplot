@@ -1,6 +1,6 @@
 name = "plplotlib"
 version = "0.0.1"
-maintainer = "PlPlotLib developer"
+maintainer = "PlPlotLib developers"
 license = "LGPL v2.1"
 keywords = "plotting"
 
