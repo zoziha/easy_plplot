@@ -17,7 +17,7 @@ especially for students in numerical analysis courses based on Fortran.
 
 Documentation can be found [here](http://hornekyle.github.io/PlPlotLib).
 
-## Get Started
+## Getting Started
 
 ### Supported Compilers
 
@@ -31,16 +31,16 @@ The following combinations are supported:
 
 - PlPlot
 - libgd
-- [Fortran-lang/FPM](https://github.com/fortran-lang/fpm)
+- [Fortran-lang/fpm](https://github.com/fortran-lang/fpm)
 
 #### Build Environment in MSYS2
 
 ```sh
-pacman -S ucrt64/mingw-w64-ucrt-x86_64-PlPlot
-pacman -S ucrt64/mingw-w64-ucrt-x86_64-libgd
+pacman -S <arch>64/mingw-w64-<arch>-x86_64-plplot
+pacman -S <arch>64/mingw-w64-<arch>-x86_64-libgd
 ```
 
-### Build with FPM
+### Build with [Fortran-lang/fpm](https://github.com/fortran-lang/fpm)
 
 Fortran Package Manager (fpm) is a package manager and build system for Fortran.<br>
 You can build `PlPlotLib` using provided `fpm.toml`:
@@ -59,12 +59,14 @@ PlPlotLib = { git="https://github.com/zoziha/PlPlotLib" }
 
 ### Usage
 
+See [more usage](http://hornekyle.github.io/PlPlotLib/page/index.html)🎯.
+
 ```fortran
 program logo_prg
         !! Create the project logo
     use kinds_mod
     use utilities_mod
-    use PlPlotlib_mod
+    use plplotlib_mod
     implicit none
 
     call setup(device='svg', fileName='build/logo-%n.svg', figSize=[600, 500])
