@@ -1,13 +1,10 @@
-module utilities_mod
-        !! Utility module containing miscellaneous tools that don't
-        !! quite fit anywhere else.
-    use iso_fortran_env
-    use kinds_mod
+!> Utility module containing miscellaneous tools that don't
+!> quite fit anywhere else.
+module utilities_m
+
+    use, intrinsic :: iso_fortran_env, only: wp => real64
     implicit none
     private
-
-    integer, parameter :: stdin = INPUT_UNIT
-    integer, parameter :: stdout = OUTPUT_UNIT
 
     interface mixval
                 !! Return a 2-vector comprising the minimum and maximum values of an array
@@ -28,9 +25,6 @@ module utilities_mod
         module procedure flatten_2
         module procedure flatten_3
     end interface
-
-    public :: stdin
-    public :: stdout
 
     public :: mixval
     public :: span
@@ -330,20 +324,20 @@ contains
             po = p
         end if
 
-        write (stdout, '(1A)', advance='no') achar(13)//colorize(m//' [', [5, 5, 0])
+        write (*, '(1A)', advance='no') achar(13)//colorize(m//' [', [5, 5, 0])
         do k = 1, N
             r = real(k - 1, wp)/real(N - 1, wp)
             if (r <= p) then
-                write (stdout, '(1A)', advance='no') colorize('=', cmap(r, [0.0_wp, 1.0_wp]))
+                write (*, '(1A)', advance='no') colorize('=', cmap(r, [0.0_wp, 1.0_wp]))
             else
-                write (stdout, '(1A)', advance='no') colorize(' ', [0, 0, 0])
+                write (*, '(1A)', advance='no') colorize(' ', [0, 0, 0])
             end if
         end do
-        write (stdout, '(1A,1A,1X,1A)', advance='no') colorize('] ', [5, 5, 0]), &
+        write (*, '(1A,1A,1X,1A)', advance='no') colorize('] ', [5, 5, 0]), &
         & colorize(real2char(100.0_wp*p, '1F5.1'), cmap(p, [0.0_wp, 1.0_wp])), &
         & colorize('%', [5, 5, 0])
-        if (p >= 1.0_wp) write (stdout, '(1A)') ''
-        flush (stdout)
+        if (p >= 1.0_wp) write (*, '(1A)') ''
+        flush (6)
     end subroutine showProgress
 
     function cmap(v, r) result(c)
@@ -381,4 +375,4 @@ contains
         o = sqrt(sum((d - mean(d))**2)/real(size(d) - 1, wp))
     end function stdev
 
-end module utilities_mod
+end module utilities_m

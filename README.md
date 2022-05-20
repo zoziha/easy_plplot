@@ -1,21 +1,19 @@
-# PlPlotLib
+# Easy Plplot
 
-<div align="center">
-<img src="doc/logo.svg" alt="PlPlotLib" width="100">
-</div>
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a6d36a1c-03a6-4a41-b069-4fd65e3c7673/deploy-status)](https://app.netlify.com/sites/easy-plplot-api/deploys)
 
-PlPlotLib is a wrapper for PlPlot inspired by the interface of 
+`easy_plplot` is a wrapper for PlPlot inspired by the interface of 
 matplotlib. It is intended to fill the need for rapid feedback while 
 developing numerical simulations, and does not replace more 
 sophisticated packages such as
 matplotlib or even direct use of PlPlot.
 
-While it is possible that the output from PlPlotLib may be considered 
+While it is possible that the output from `easy_plplot` may be considered 
 as publication quality, no assertion is made along those lines. This 
 software has been written in the hope that it will be useful, 
 especially for students in numerical analysis courses based on Fortran.
 
-Documentation can be found [here](http://hornekyle.github.io/PlPlotLib).
+Documentation can be found [here](https://easy-plplot-api.netlify.app/).
 
 ## Getting Started
 
@@ -29,7 +27,7 @@ The following combinations are supported:
 
 ### Dependencies
 
-- PlPlot
+- Plplot
 - libgd
 - [Fortran-lang/fpm](https://github.com/fortran-lang/fpm)
 
@@ -43,31 +41,31 @@ pacman -S <arch>64/mingw-w64-<arch>-x86_64-libgd
 ### Build with [Fortran-lang/fpm](https://github.com/fortran-lang/fpm)
 
 Fortran Package Manager (fpm) is a package manager and build system for Fortran.<br>
-You can build `PlPlotLib` using provided `fpm.toml`:
+You can build `easy_plplot` using provided `fpm.toml`:
 
 ```sh
-fpm run --list
-fpm run <executable_name, see `fpm.toml` or run list>
+export FPM_FFLAGS="-Ipath/to/plplot/include"
+fpm run --example --all
 ```
 
-To use `PlPlotLib` within your `fpm` project, add the following lines to your `fpm.toml` file:
+To use `easy_plplot` within your `fpm` project, add the following lines to your `fpm.toml` file:
 
 ```toml
 [dependencies]
-PlPlotLib = { git="https://github.com/zoziha/PlPlotLib" }
+easy_plplot = { git="https://github.com/zoziha/easy_plplot" }
 ```
 
 ### Usage
 
-See [more usage](http://hornekyle.github.io/PlPlotLib/page/index.html)🎯.
+See [more usage](https://easy-plplot-api.netlify.app/page/index.html)🎯.
 
 ```fortran
+!> Create the project logo
 program logo_prg
-        !! Create the project logo
-    use kinds_mod
-    use utilities_mod
-    use plplotlib_mod
+    use utilities_m
+    use easy_plplot_m
     implicit none
+    real(wp), parameter :: pi = acos(-1.0d0)
 
     call setup(device='svg', fileName='build/logo-%n.svg', figSize=[600, 500])
     call makeLogo
@@ -100,16 +98,21 @@ end program logo_prg
 ```
 
 <div align="center">
-<img src="doc/logo-1.svg" alt="PlPlotLib" width="600">
+<img src="media/logo-1.svg" alt="easy_plplot" width="600">
 </div>
 
 ## Links
 
 - [PlPlot](http://PlPlot.sourceforge.net/)
-- [hornekyle/PlPlotLib](https://github.com/hornekyle/PlPlotLib) 
+- [hornekyle/plplotlib](https://github.com/hornekyle/plplotlib) 
 
 Thanks to `PlPlot` written by Alan W. Irwin and other contributors.<br>
 Thanks to the Fortran interface of `PlPlot` written by Arjen Markus.<br>
-Thanks to the `PlPlotLib` high-level interfaces written by Dr Kyle Horne.
+Thanks to the `plplotlib` high-level interfaces written by Dr Kyle Horne.
 
 Thanks for your all contributions. Salute!
+
+### Other Plot-related Fortran Projects
+
+- [jacobwilliams/pyplot-fortran](https://github.com/jacobwilliams/pyplot-fortran)
+- [kookma/ogpf](https://github.com/kookma/ogpf)
