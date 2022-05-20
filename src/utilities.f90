@@ -6,22 +6,22 @@ module utilities_m
     implicit none
     private
 
+    !> Return a 2-vector comprising the minimum and maximum values of an array
     interface mixval
-                !! Return a 2-vector comprising the minimum and maximum values of an array
         module procedure mixval_1
         module procedure mixval_2
         module procedure mixval_3
     end interface
 
+    !> Return a the maximum-minumum values of an array
     interface span
-                !! Return a the maximum-minumum values of an array
         module procedure span_1
         module procedure span_2
         module procedure span_3
     end interface
 
+    !> Reduce an array to one dimension
     interface flatten
-                !! Reduce an array to one dimension
         module procedure flatten_2
         module procedure flatten_3
     end interface
@@ -51,68 +51,59 @@ module utilities_m
 
 contains
 
+    !> Return [hi,low] for an array
     function mixval_1(x) result(b)
-                !! Return [hi,low] for an array
-        real(wp), dimension(:), intent(in) :: x
-                        !! Array to find extrema in
+        real(wp), dimension(:), intent(in) :: x     !! Array to find extrema in
         real(wp), dimension(2) :: b
 
         b = [minval(x), maxval(x)]
     end function mixval_1
 
+    !> Return [hi,low] for an array
     function mixval_2(x) result(b)
-                !! Return [hi,low] for an array
-        real(wp), dimension(:, :), intent(in) :: x
-                        !! Array to find extrema in
+        real(wp), dimension(:, :), intent(in) :: x  !! Array to find extrema in
         real(wp), dimension(2) :: b
 
         b = [minval(x), maxval(x)]
     end function mixval_2
 
+    !> Return [hi,low] for an array
     function mixval_3(x) result(b)
-                !! Return [hi,low] for an array
-        real(wp), dimension(:, :, :), intent(in) :: x
-                        !! Array to find extrema in
+        real(wp), dimension(:, :, :), intent(in) :: x   !! Array to find extrema in
         real(wp), dimension(2) :: b
 
         b = [minval(x), maxval(x)]
     end function mixval_3
 
+    !> Return hi-low for an array
     function span_1(x) result(o)
-                !! Return hi-low for an array
-        real(wp), dimension(:), intent(in) :: x
-                        !! Array to find span in
+        real(wp), dimension(:), intent(in) :: x     !! Array to find span in
         real(wp) :: o
 
         o = maxval(x) - minval(x)
     end function span_1
 
+    !> Return hi-low for an array
     function span_2(x) result(o)
-                !! Return hi-low for an array
-        real(wp), dimension(:, :), intent(in) :: x
-                        !! Array to find span in
+        real(wp), dimension(:, :), intent(in) :: x  !! Array to find span in
         real(wp) :: o
 
         o = maxval(x) - minval(x)
     end function span_2
 
+    !> Return hi-low for an array
     function span_3(x) result(o)
-                !! Return hi-low for an array
-        real(wp), dimension(:, :, :), intent(in) :: x
-                        !! Array to find span in
+        real(wp), dimension(:, :, :), intent(in) :: x !! Array to find span in
         real(wp) :: o
 
         o = maxval(x) - minval(x)
     end function span_3
 
+    !> Return an array of evenly-spaced values
     function linspace(l, h, N) result(o)
-                !! Return an array of evenly-spaced values
-        real(wp), intent(in) :: l
-                        !! Low-bound for values
-        real(wp), intent(in) :: h
-                        !! High-bound for values
-        integer, intent(in), optional :: N
-                        !! Number of values (default 20)
+        real(wp), intent(in) :: l   !! Low-bound for values
+        real(wp), intent(in) :: h   !! High-bound for values
+        integer, intent(in), optional :: N  !! Number of values (default 20)
         real(wp), dimension(:), allocatable :: o
 
         integer :: Nl, i
@@ -123,12 +114,10 @@ contains
         o = [((h - l)*real(i - 1, wp)/real(Nl - 1, wp) + l, i=1, Nl)]
     end function linspace
 
+    !> Test if text starts with str
     function startsWith(text, str) result(o)
-                !! Test if text starts with str
-        character(*), intent(in) :: text
-                        !! Text to search
-        character(*), intent(in) :: str
-                        !! String to look for
+        character(*), intent(in) :: text    !! Text to search
+        character(*), intent(in) :: str     !! String to look for
         logical :: o
         integer :: k
 
@@ -136,12 +125,10 @@ contains
         o = text(1:k) == str
     end function startsWith
 
+    !> Test if text ends with str
     function endsWith(text, str) result(o)
-                !! Test if text ends with str
-        character(*), intent(in) :: text
-                        !! Text to search
-        character(*), intent(in) :: str
-                        !! String to look for
+        character(*), intent(in) :: text    !! Text to search
+        character(*), intent(in) :: str     !! String to look for
         logical :: o
         integer :: k
 
@@ -149,10 +136,10 @@ contains
         o = text(k - len(str) + 1:k) == str
     end function endsWith
 
+    !> Return a sample from an approximate normal distribution
+    !> with a mean of \(\mu=0\) and a standard deviation of
+    !> \(\sigma=1\). In this approximate distribution, \(x\in[-6,6]\).
     function randomNormal() result(o)
-                !! Return a sample from an approximate normal distribution
-                !! with a mean of \(\mu=0\) and a standard deviation of
-                !! \(\sigma=1\). In this approximate distribution, \(x\in[-6,6]\).
         real(wp) :: o
         real(wp), dimension(12) :: x
 
@@ -160,39 +147,35 @@ contains
         o = sum(x) - 6.0_wp
     end function randomNormal
 
+    !> Return a sample from a uniform distribution
+    !> in the range \(x\in[-1,1]\).
     function randomUniform() result(o)
-                !! Return a sample from a uniform distribution
-                !! in the range \(x\in[-1,1]\).
         real(wp) :: o
 
         call random_number(o)
         o = o*2.0_wp - 1.0_wp
     end function randomUniform
 
+    !> Convert a 2d array to 1d
     function flatten_2(A) result(o)
-                !! Convert a 2d array to 1d
-        real(wp), dimension(:, :), intent(in) :: A
-                        !! Array to convert
+        real(wp), dimension(:, :), intent(in) :: A  !! Array to convert
         real(wp), dimension(:), allocatable :: o
 
         o = reshape(A, [size(A)])
     end function flatten_2
 
+    !> Convert a 3d array to 1d
     function flatten_3(A) result(o)
-                !! Convert a 3d array to 1d
-        real(wp), dimension(:, :, :), intent(in) :: A
-                        !! Array to convert
+        real(wp), dimension(:, :, :), intent(in) :: A   !! Array to convert
         real(wp), dimension(:), allocatable :: o
 
         o = reshape(A, [size(A)])
     end function flatten_3
 
+    !> Construct a 2d array of X values from a structured grid
     function meshGridX(x, y) result(o)
-                !! Construct a 2d array of X values from a structured grid
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-positions in grid
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-positions in grid
+        real(wp), dimension(:), intent(in) :: x     !! x-positions in grid
+        real(wp), dimension(:), intent(in) :: y     !! y-positions in grid
         real(wp), dimension(:, :), allocatable :: o
 
         integer :: Nx, Ny
@@ -206,12 +189,10 @@ contains
         forall (i=1:Nx, j=1:Ny) o(i, j) = x(i)
     end function meshGridX
 
+    !> Construct a 2d array of Y values from a structured grid
     function meshGridY(x, y) result(o)
-                !! Construct a 2d array of Y values from a structured grid
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-positions in grid
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-positions in grid
+        real(wp), dimension(:), intent(in) :: x     !! x-positions in grid
+        real(wp), dimension(:), intent(in) :: y     !! y-positions in grid
         real(wp), dimension(:, :), allocatable :: o
 
         integer :: Nx, Ny
@@ -225,10 +206,9 @@ contains
         forall (i=1:Nx, j=1:Ny) o(i, j) = y(j)
     end function meshGridY
 
+    !> Add terminal format codes to coloize a string
     function colorize(s, c) result(o)
-                !! Add terminal format codes to coloize a string
-        character(*), intent(in) :: s
-                        !! String to colorize
+        character(*), intent(in) :: s   !! String to colorize
         integer, dimension(3) :: c ! c in [0,5]
                         !! Color code in [r,g,b] where \(r,g,b\in[0,5]\)
         character(:), allocatable :: o
@@ -244,14 +224,11 @@ contains
         o = trim(pre)//s//ESC//'[0m'
     end function colorize
 
+    !> Convert a real to a character
     pure function real2char(a, f, l) result(o)
-                !! Convert a real to a character
-        real(wp), intent(in) :: a
-                        !! Real value to convert
-        character(*), optional, intent(in) :: f
-                        !! Format of result
-        integer, optional, intent(in) :: l
-                        !! Length of result
+        real(wp), intent(in) :: a   !! Real value to convert
+        character(*), optional, intent(in) :: f     !! Format of result
+        integer, optional, intent(in) :: l          !! Length of result
         character(:), allocatable :: o
 
         character(128) :: buf
@@ -273,14 +250,11 @@ contains
         end if
     end function real2char
 
+    !> Convert an integer to a character
     pure function int2char(a, f, l) result(o)
-                !! Convert an integer to a character
-        integer, intent(in) :: a
-                        !! Integer value to convert
-        character(*), optional, intent(in) :: f
-                        !! Format of result
-        integer, optional, intent(in) :: l
-                        !! Length of result
+        integer, intent(in) :: a    !! Integer value to convert
+        character(*), optional, intent(in) :: f     !! Format of result
+        integer, optional, intent(in) :: l          !! Length of result
         character(:), allocatable :: o
 
         character(128) :: buf
@@ -302,12 +276,10 @@ contains
         end if
     end function int2char
 
+    !> Show a progress bar with a message
     subroutine showProgress(m, p)
-                !! Show a progress bar with a message
-        character(*), intent(in) :: m
-                        !! Message to show
-        real(wp), intent(in) :: p
-                        !! Progress level \(p\in[0,1]\)
+        character(*), intent(in) :: m   !! Message to show
+        real(wp), intent(in) :: p       !! Progress level \(p\in[0,1]\)
 
         real(wp) :: r
         real(wp), save :: po
@@ -340,12 +312,10 @@ contains
         flush (6)
     end subroutine showProgress
 
+    !> Sample a color from a cool-warm colormap for colorize
     function cmap(v, r) result(c)
-                !! Sample a color from a cool-warm colormap for colorize
-        real(wp), intent(in) :: v
-                        !! Value to sample
-        real(wp), dimension(2), intent(in) :: r
-                        !! Range to sample from
+        real(wp), intent(in) :: v                   !! Value to sample
+        real(wp), dimension(2), intent(in) :: r     !! Range to sample from
         integer, dimension(3) :: c
 
         integer :: s
@@ -359,16 +329,16 @@ contains
         end if
     end function cmap
 
+    !> Compute the arithmetic mean of an array
     function mean(d) result(o)
-                !! Compute the arithmetic mean of an array
         real(wp), dimension(:), intent(in) :: d
         real(wp) :: o
 
         o = sum(d)/real(size(d), wp)
     end function mean
 
+    !> Compute the standard deviation of an array
     function stdev(d) result(o)
-                !! Compute the standard deviation of an array
         real(wp), dimension(:), intent(in) :: d
         real(wp) :: o
 

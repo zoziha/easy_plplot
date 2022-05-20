@@ -14,32 +14,19 @@ module easy_plplot_m
     !> Default output device
     character(*), parameter :: default_dev = 'qtwidget'
 
-    !=================!
-    != Library State =!
-    !=================!
+    ! Library State
+    logical :: didShow = .false.                !! Flag for library display status
+    real(pp) :: fontScale = 1.0_pp              !! Font scale factor to resetPen
+    logical :: blackOnWhite = .true.            !! Reverse black and white
+    logical :: transparentBackground = .false.  !! Transparent background
 
-    logical :: didShow = .false.
-                !! Flag for library display status
-    real(pp) :: fontScale = 1.0_pp
-                !! Font scale factor to resetPen
-    logical :: blackOnWhite = .true.
-                !! Reverse black and white
-    logical :: transparentBackground = .false.
-                !! Transparent background
-
-    !==============!
-    != Interfaces =!
-    !==============!
-
+    ! Interfaces
     interface localize
         module procedure localize_1
         module procedure localize_2
     end interface
 
-    !===========!
-    != Exports =!
-    !===========!
-
+    ! Exports
     public :: setup, show
     public :: figure
     public :: subplot
@@ -62,20 +49,14 @@ module easy_plplot_m
 
 contains
 
-    !===================!
-    != Helper Routines =!
-    !===================!
+    ! Helper Routines
 
+    !> Count data in each bin
     function binData(d, N, db, normalize) result(o)
-                !! Count data in each bin
-        real(wp), dimension(:), intent(in) :: d
-                        !! Data for binning
-        integer, intent(in), optional :: N
-                        !! Number of bins
-        real(wp), dimension(2), intent(in), optional :: db
-                        !! Boundaries of bin range
-        integer, intent(in), optional :: normalize
-                        !! Normalization type (1=sum, 2=bin size, 3=maxval)
+        real(wp), dimension(:), intent(in) :: d     !! Data for binning
+        integer, intent(in), optional :: N          !! Number of bins
+        real(wp), dimension(2), intent(in), optional :: db  !! Boundaries of bin range
+        integer, intent(in), optional :: normalize  !! Normalization type (1=sum, 2=bin size, 3=maxval)
         real(wp), dimension(:, :), allocatable :: o
 
         real(wp), dimension(:), allocatable :: b
@@ -132,12 +113,9 @@ contains
         forall (i=1:N, j=1:M) o(i, j) = real(A(i, j), pp)
     end function localize_2
 
-    !============================!
-    != Axes and Figure Routines =!
-    !============================!
-
+    ! Axes and Figure Routines
+    !> Create a new figure
     subroutine figure
-                !! Create a new figure
         logical, save :: isFirst = .true.
 
         if (.not. isFirst) then
@@ -152,16 +130,12 @@ contains
         call resetPen()
     end subroutine figure
 
+    !> Create a set of axes on a figure
     subroutine subplot(ny, nx, i, aspect, is3d)
-                !! Create a set of axes on a figure
-        integer, intent(in) :: nx
-                        !! Number of subplot columns
-        integer, intent(in) :: ny
-                        !! Number of subplot rows
-        integer, intent(in) :: i
-                        !! Subplot to use
-        real(wp), intent(in), optional :: aspect
-                        !! Aspect ratio of the axes
+        integer, intent(in) :: nx   !! Number of subplot columns
+        integer, intent(in) :: ny   !! Number of subplot rows
+        integer, intent(in) :: i    !! Subplot to use
+        real(wp), intent(in), optional :: aspect    !! Aspect ratio of the axes
         logical, intent(in), optional :: is3d
 
         logical :: is3dl
@@ -192,12 +166,10 @@ contains
         call plwind(-eps, eps, -eps, eps)
     end subroutine defaultLim
 
+    !> Set the x and y ranges of the plot
     subroutine xylim(xb, yb)
-                !! Set the x and y ranges of the plot
-        real(wp), dimension(2), intent(in) :: xb
-                        !! x-range of plot
-        real(wp), dimension(2), intent(in) :: yb
-                        !! y-range of plot
+        real(wp), dimension(2), intent(in) :: xb    !! x-range of plot
+        real(wp), dimension(2), intent(in) :: yb    !! y-range of plot
 
         real(pp), dimension(2) :: xbl, ybl
 
@@ -207,8 +179,8 @@ contains
         call plwind(xbl(1), xbl(2), ybl(1), ybl(2))
     end subroutine xylim
 
+    !> Set the limits of the x-axis
     subroutine xlim(xl, xh)
-                !! Set the limits of the x-axis
         real(wp), intent(in) :: xl, xh
 
         real(pp) :: x1, x2, y1, y2
@@ -217,8 +189,8 @@ contains
         call plwind(real(xl, pp), real(xh, pp), y1, y2)
     end subroutine xlim
 
+    !> Set the limits of the y-axis
     subroutine ylim(yl, yh)
-                !! Set the limits of the y-axis
         real(wp), intent(in) :: yl, yh
 
         real(pp) :: x1, x2, y1, y2
@@ -227,20 +199,14 @@ contains
         call plwind(x1, x2, real(yl, pp), real(yh, pp))
     end subroutine ylim
 
+    !> Set the limits for a 3d plot
     subroutine xyzlim(xb, yb, zb, altitude, azimuth, zoom)
-                !! Set the limits for a 3d plot
-        real(wp), dimension(2), intent(in) :: xb
-                        !! x-range of plot
-        real(wp), dimension(2), intent(in) :: yb
-                        !! y-range of plot
-        real(wp), dimension(2), intent(in) :: zb
-                        !! z-range of plot
-        real(wp), intent(in), optional :: altitude
-                        !! Altitude angle of plot in degrees
-        real(wp), intent(in), optional :: azimuth
-                        !! Azimuth angle of plot in degrees
-        real(wp), intent(in), optional :: zoom
-                        !! Zoom ratio (default 1.0)
+        real(wp), dimension(2), intent(in) :: xb    !! x-range of plot
+        real(wp), dimension(2), intent(in) :: yb    !! y-range of plot
+        real(wp), dimension(2), intent(in) :: zb    !! z-range of plot
+        real(wp), intent(in), optional :: altitude  !! Altitude angle of plot in degrees
+        real(wp), intent(in), optional :: azimuth   !! Azimuth angle of plot in degrees
+        real(wp), intent(in), optional :: zoom      !! Zoom ratio (default 1.0)
 
         real(pp) :: al, az, zm
 
@@ -258,20 +224,14 @@ contains
         & real(zb(1), pp), real(zb(2), pp), al, az)
     end subroutine xyzlim
 
+    !> Set the ticks for the axes
     subroutine ticks(dx, dy, logx, logy, color, lineWidth)
-                !! Set the ticks for the axes
-        real(wp), intent(in), optional :: dx
-                        !! Spacing between ticks on x-axis
-        real(wp), intent(in), optional :: dy
-                        !! Spacing between ticks on y-axis
-        logical, intent(in), optional :: logx
-                        !! Flag for log-ticks and labels on x-axis
-        logical, intent(in), optional :: logy
-                        !! Flag for log-ticks and labels on y-axis
-        character(*), intent(in), optional :: color
-                        !! Color code for ticks, box, and labels
-        real(wp), optional :: linewidth
-                        !! Line width for ticks and box
+        real(wp), intent(in), optional :: dx    !! Spacing between ticks on x-axis
+        real(wp), intent(in), optional :: dy    !! Spacing between ticks on y-axis
+        logical, intent(in), optional :: logx   !! Flag for log-ticks and labels on x-axis
+        logical, intent(in), optional :: logy   !! Flag for log-ticks and labels on y-axis
+        character(*), intent(in), optional :: color     !! Color code for ticks, box, and labels
+        real(wp), optional :: linewidth         !! Line width for ticks and box
 
         real(pp) :: dxl, dyl
         character(10) :: xopts, yopts
@@ -301,16 +261,12 @@ contains
         call resetPen()
     end subroutine ticks
 
+    !> Set x,y and plot labels
     subroutine box(xLabel, yLabel, zLabel, color)
-                !! Set x,y and plot labels
-        character(*), intent(in) :: xLabel
-                        !! Label for x-axis
-        character(*), intent(in) :: yLabel
-                        !! Label for x-axis
-        character(*), intent(in) :: zLabel
-                        !! Label for z-axis
-        character(*), intent(in), optional :: color
-                        !! Color of labels
+        character(*), intent(in) :: xLabel              !! Label for x-axis
+        character(*), intent(in) :: yLabel              !! Label for x-axis
+        character(*), intent(in) :: zLabel              !! Label for z-axis
+        character(*), intent(in), optional :: color     !! Color of labels
 
         if (present(color)) call setColor(color)
         call plbox3('bnstu', xLabel, 0.0_pp, 0, 'bnstu', yLabel, 0.0_pp, 0, 'bnstu', zLabel, &
@@ -318,20 +274,14 @@ contains
         call resetPen()
     end subroutine box
 
+    !> Set the ticks for the x-axis
     subroutine xticks(d, logScale, primary, secondary, color, lineWidth)
-                !! Set the ticks for the x-axis
-        real(wp), intent(in), optional :: d
-                        !! Spacing between ticks
-        logical, intent(in), optional :: logScale
-                        !! Flag for log-ticks and labels
-        logical, intent(in), optional :: primary
-                        !! Draw primary axis
-        logical, intent(in), optional :: secondary
-                        !! Draw secondary axis
-        character(*), intent(in), optional :: color
-                        !! Color code for ticks, box, and labels
-        real(wp), optional :: linewidth
-                        !! Line width for ticks and box
+        real(wp), intent(in), optional :: d         !! Spacing between ticks
+        logical, intent(in), optional :: logScale   !! Flag for log-ticks and labels
+        logical, intent(in), optional :: primary    !! Draw primary axis
+        logical, intent(in), optional :: secondary  !! Draw secondary axis
+        character(*), intent(in), optional :: color !! Color code for ticks, box, and labels
+        real(wp), optional :: linewidth             !! Line width for ticks and box
         real(pp) :: dxl, dyl
         character(10) :: xopts, yopts
 
@@ -364,20 +314,14 @@ contains
         call resetPen()
     end subroutine xticks
 
+    !> Set the ticks for the y-axis
     subroutine yticks(d, logScale, primary, secondary, color, lineWidth)
-                !! Set the ticks for the y-axis
-        real(wp), intent(in), optional :: d
-                        !! Spacing between ticks
-        logical, intent(in), optional :: logScale
-                        !! Flag for log-ticks and labels
-        logical, intent(in), optional :: primary
-                        !! Draw primary axis
-        logical, intent(in), optional :: secondary
-                        !! Draw secondary axis
-        character(*), intent(in), optional :: color
-                        !! Color code for ticks, box, and labels
-        real(wp), optional :: linewidth
-                        !! Line width for ticks and box
+        real(wp), intent(in), optional :: d         !! Spacing between ticks
+        logical, intent(in), optional :: logScale   !! Flag for log-ticks and labels
+        logical, intent(in), optional :: primary    !! Draw primary axis
+        logical, intent(in), optional :: secondary  !! Draw secondary axis
+        character(*), intent(in), optional :: color !! Color code for ticks, box, and labels
+        real(wp), optional :: linewidth             !! Line width for ticks and box
         real(pp) :: dxl, dyl
         character(10) :: xopts, yopts
 
@@ -410,16 +354,12 @@ contains
         call resetPen()
     end subroutine yticks
 
+    !> Set x,y and plot labels
     subroutine labels(xLabel, yLabel, plotLabel, color)
-                !! Set x,y and plot labels
-        character(*), intent(in) :: xLabel
-                        !! Label for x-axis
-        character(*), intent(in) :: yLabel
-                        !! Label for x-axis
-        character(*), intent(in) :: plotLabel
-                        !! Label entire plot
-        character(*), intent(in), optional :: color
-                        !! Color of labels
+        character(*), intent(in) :: xLabel              !! Label for x-axis
+        character(*), intent(in) :: yLabel              !! Label for y-axis
+        character(*), intent(in) :: plotLabel           !! Label entire plot
+        character(*), intent(in), optional :: color     !! Color of labels
 
         if (present(color)) call setColor(color)
         call pllab(xLabel, yLabel, plotLabel)
@@ -438,40 +378,32 @@ contains
         call resetPen()
     end subroutine xlabel
 
+    !> Set y-label
     subroutine ylabel(label, color)
-                !! Set y-label
-        character(*), intent(in) :: label
-                        !! Label for axis
-        character(*), intent(in), optional :: color
-                        !! Color of labels
+        character(*), intent(in) :: label           !! Label for axis
+        character(*), intent(in), optional :: color !! Color of labels
 
         if (present(color)) call setColor(color)
         call plmtex('l', 5.0_pp, 0.5_pp, 0.5_pp, label)
         call resetPen()
     end subroutine ylabel
 
+    !> Set plot title
     subroutine title(label, color)
-                !! Set plot title
-        character(*), intent(in) :: label
-                        !! Label for plot
-        character(*), intent(in), optional :: color
-                        !! Color of labels
+        character(*), intent(in) :: label               !! Label for plot
+        character(*), intent(in), optional :: color     !! Color of labels
 
         if (present(color)) call setColor(color)
         call plmtex('t', 1.5_pp, 0.5_pp, 0.5_pp, label)
         call resetPen()
     end subroutine title
 
+    !> Add a colorbar to the top of the plot
     subroutine colorbar(z, N, leftLabel, rightLabel)
-                !! Add a colorbar to the top of the plot
-        real(wp), dimension(:, :), intent(in) :: z
-                        !! Data used for levels computation
-        integer, intent(in) :: N
-                        !! Number of levels to compute
-        character(*), intent(in), optional :: leftLabel
-                        !! Label for left side of colorbar
-        character(*), intent(in), optional :: rightLabel
-                        !! Label for right side of colorbar
+        real(wp), dimension(:, :), intent(in) :: z          !! Data used for levels computation
+        integer, intent(in) :: N                            !! Number of levels to compute
+        character(*), intent(in), optional :: leftLabel     !! Label for left side of colorbar
+        character(*), intent(in), optional :: rightLabel    !! Label for right side of colorbar
 
         real(pp), dimension(:, :), allocatable :: values
         character(64), dimension(2) :: labels
@@ -504,16 +436,12 @@ contains
                 & ['bcvmt'], [0.0_pp], [0], [size(values)], values)
     end subroutine colorbar
 
+    !> Add a colorbar to the top of the plot
     subroutine colorbar2(z, N, leftLabel, rightLabel)
-                !! Add a colorbar to the top of the plot
-        real(wp), dimension(:, :), intent(in) :: z
-                        !! Data used for levels computation
-        integer, intent(in) :: N
-                        !! Number of levels to compute
-        character(*), intent(in), optional :: leftLabel
-                        !! Label for left side of colorbar
-        character(*), intent(in), optional :: rightLabel
-                        !! Label for right side of colorbar
+        real(wp), dimension(:, :), intent(in) :: z  !! Data used for levels computation
+        integer, intent(in) :: N                    !! Number of levels to compute
+        character(*), intent(in), optional :: leftLabel     !! Label for left side of colorbar
+        character(*), intent(in), optional :: rightLabel    !! Label for right side of colorbar
 
         real(pp), dimension(:, :), allocatable :: values
         character(64), dimension(2) :: labels
@@ -546,23 +474,18 @@ contains
                 & ['bcvmt'], [0.0_pp], [0], [size(values)], values)
     end subroutine colorbar2
 
+    !> Create legend for plot data
+    !>
+    !> FIXME: Text sizing should be modifiable
     subroutine legend(corner, series, lineWidths, markScales, markCounts, ncol)
-                !! Create legend for plot data
-                !!
-                !! FIXME: Text sizing should be modifiable
-        character(*), intent(in) :: corner
-                        !! Corner for legend
+        character(*), intent(in) :: corner                      !! Corner for legend
         character(*), dimension(:, :), intent(in) :: series
-                        !! Data series in rows
-                        !! [name,textColor,lineStyle,lineColor,markStyle,markColor,boxColor]
-        real(wp), dimension(:), intent(in), optional :: lineWidths
-                        !! Line widths for the plots
-        real(wp), dimension(:), intent(in), optional :: markScales
-                        !! Marker sizes for the plots
-        integer, dimension(:), intent(in), optional :: markCounts
-                        !! Marker counts for the plots
-        integer, intent(in), optional :: ncol
-                        !! Number of columns
+                                !! Data series in rows
+                                !! [name,textColor,lineStyle,lineColor,markStyle,markColor,boxColor]
+        real(wp), dimension(:), intent(in), optional :: lineWidths  !! Line widths for the plots
+        real(wp), dimension(:), intent(in), optional :: markScales  !! Marker sizes for the plots
+        integer, dimension(:), intent(in), optional :: markCounts   !! Marker counts for the plots
+        integer, intent(in), optional :: ncol                       !! Number of columns
 
         real(pp) :: width, height, xoff, yoff
         real(pp) :: plotWidth
@@ -673,28 +596,18 @@ contains
 
     end subroutine legend
 
-    !=====================!
-    != Plotting Routines =!
-    !=====================!
+    ! Plotting Routines
 
+    !> Create a histogram
     subroutine hist(d, N, db, relWidth, fillColor, fillPattern, lineColor, lineWidth)
-                !! Create a histogram
-        real(wp), dimension(:), intent(in) :: d
-                        !! Data for binning
-        integer, intent(in), optional :: N
-                        !! Number of bins
-        real(wp), dimension(2), intent(in), optional :: db
-                        !! Boundaries of bin range
-        real(wp), intent(in), optional :: relWidth
-                        !! Relative width of bars (default 0.8)
-        character(*), intent(in), optional :: fillColor
-                        !! Color of bar fills
-        character(*), intent(in), optional :: fillPattern
-                        !! Pattern of bar fills
-        character(*), intent(in), optional :: lineColor
-                        !! Color of lines around bars
-        real(wp), optional :: lineWidth
-                        !! Width of lines around bars
+        real(wp), dimension(:), intent(in) :: d     !! Data for binning
+        integer, intent(in), optional :: N          !! Number of bins
+        real(wp), dimension(2), intent(in), optional :: db  !! Boundaries of bin range
+        real(wp), intent(in), optional :: relWidth          !! Relative width of bars (default 0.8)
+        character(*), intent(in), optional :: fillColor     !! Color of bar fills
+        character(*), intent(in), optional :: fillPattern   !! Pattern of bar fills
+        character(*), intent(in), optional :: lineColor     !! Color of lines around bars
+        real(wp), optional :: lineWidth                     !! Width of lines around bars
 
         real(wp), dimension(:, :), allocatable :: h
         real(wp), dimension(2) :: dbl
@@ -762,18 +675,13 @@ contains
         call resetPen()
     end subroutine hist
 
+    !> Create scatter plot of data
     subroutine scatter(x, y, c, s, markColor, markStyle, markSize)
-                !! Create scatter plot of data
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-coordinates of data
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-coordinates of data
-        real(wp), dimension(:), intent(in), optional :: c
-                        !! Data for smooth coloring
-        real(wp), dimension(:), intent(in), optional :: s
-                        !! Data for marker scaling
-        character(*), intent(in), optional :: markColor
-                        !! Color of markers; overridden by z
+        real(wp), dimension(:), intent(in) :: x     !! x-coordinates of data
+        real(wp), dimension(:), intent(in) :: y     !! y-coordinates of data
+        real(wp), dimension(:), intent(in), optional :: c   !! Data for smooth coloring
+        real(wp), dimension(:), intent(in), optional :: s   !! Data for marker scaling
+        character(*), intent(in), optional :: markColor     !! Color of markers; overridden by z
         character(*), intent(in), optional :: markStyle
                         !! Style of markers
         real(wp), intent(in), optional :: markSize
@@ -803,24 +711,16 @@ contains
         call resetPen()
     end subroutine scatter
 
+    !> Plot data using lines and or markers
     subroutine plot(x, y, lineColor, lineStyle, lineWidth, markColor, markStyle, markSize)
-                !! Plot data using lines and or markers
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-data for plot
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-data for plot
-        character(*), intent(in), optional :: lineColor
-                        !! Color of line
-        character(*), intent(in), optional :: lineStyle
-                        !! Style of line; '' for no line
-        real(wp), intent(in), optional :: lineWidth
-                        !! Width of line
-        character(*), intent(in), optional :: markColor
-                        !! Color of markers, if any
-        character(*), intent(in), optional :: markStyle
-                        !! Style of markers; '' or absent for none
-        real(wp), intent(in), optional :: markSize
-                        !! Size of markers, if any
+        real(wp), dimension(:), intent(in) :: x     !! x-data for plot
+        real(wp), dimension(:), intent(in) :: y     !! y-data for plot
+        character(*), intent(in), optional :: lineColor     !! Color of line
+        character(*), intent(in), optional :: lineStyle     !! Style of line; '' for no line
+        real(wp), intent(in), optional :: lineWidth         !! Width of line
+        character(*), intent(in), optional :: markColor     !! Color of markers, if any
+        character(*), intent(in), optional :: markStyle     !! Style of markers; '' or absent for none
+        real(wp), intent(in), optional :: markSize          !! Size of markers, if any
 
         real(pp), dimension(:), allocatable :: xl, yl
         character(32) :: code
@@ -852,26 +752,17 @@ contains
         call resetPen()
     end subroutine plot
 
+    !> Plot data using lines and or markers
     subroutine plot3(x, y, z, lineColor, lineStyle, lineWidth, markColor, markStyle, markSize)
-                !! Plot data using lines and or markers
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-data for plot
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-data for plot
-        real(wp), dimension(:), intent(in) :: z
-                        !! z-data for plot
-        character(*), intent(in), optional :: lineColor
-                        !! Color of line
-        character(*), intent(in), optional :: lineStyle
-                        !! Style of line; '' for no line
-        real(wp), intent(in), optional :: lineWidth
-                        !! Width of line
-        character(*), intent(in), optional :: markColor
-                        !! Color of markers, if any
-        character(*), intent(in), optional :: markStyle
-                        !! Style of markers; '' or absent for none
-        real(wp), intent(in), optional :: markSize
-                        !! Size of markers, if any
+        real(wp), dimension(:), intent(in) :: x     !! x-data for plot
+        real(wp), dimension(:), intent(in) :: y     !! y-data for plot
+        real(wp), dimension(:), intent(in) :: z     !! z-data for plot
+        character(*), intent(in), optional :: lineColor     !! Color of line
+        character(*), intent(in), optional :: lineStyle     !! Style of line; '' for no line
+        real(wp), intent(in), optional :: lineWidth         !! Width of line
+        character(*), intent(in), optional :: markColor     !! Color of markers, if any
+        character(*), intent(in), optional :: markStyle     !! Style of markers; '' or absent for none
+        real(wp), intent(in), optional :: markSize          !! Size of markers, if any
 
         real(pp), dimension(:), allocatable :: xl, yl, zl
         real(pp) :: dx, dy, dz, sx, sy, sz
@@ -911,22 +802,15 @@ contains
         call resetPen()
     end subroutine plot3
 
+    !> Plot contour lines
     subroutine contour(x, y, z, N, lineColor, lineStyle, lineWidth)
-                !! Plot contour lines
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-coordinates of data
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-coordinates of data
-        real(wp), dimension(:, :), intent(in) :: z
-                        !! Data for contouring
-        integer, intent(in), optional :: N
-                        !! Number of levels to use in contour
-        character(*), intent(in), optional :: lineColor
-                        !! Color of contour lines
-        character(*), intent(in), optional :: lineStyle
-                        !! Style of contour lines
-        real(wp), optional :: lineWidth
-                        !! Width of contour lines
+        real(wp), dimension(:), intent(in) :: x     !! x-coordinates of data
+        real(wp), dimension(:), intent(in) :: y     !! y-coordinates of data
+        real(wp), dimension(:, :), intent(in) :: z  !! Data for contouring
+        integer, intent(in), optional :: N          !! Number of levels to use in contour
+        character(*), intent(in), optional :: lineColor     !! Color of contour lines
+        character(*), intent(in), optional :: lineStyle     !! Style of contour lines
+        real(wp), optional :: lineWidth                     !! Width of contour lines
 
         real(pp), dimension(:), allocatable :: xl, yl
         real(pp), dimension(:, :), allocatable :: zl
@@ -949,18 +833,13 @@ contains
         call resetPen()
     end subroutine contour
 
+    !> Plot a 3d surface
     subroutine surface(x, y, z, N, lineStyle)
-                !! Plot a 3d surface
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-coordinates of data
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-coordinates of data
-        real(wp), dimension(:, :), intent(in) :: z
-                        !! Data for contouring
-        integer, intent(in), optional :: N
-                        !! Number of levels to use in surface colors
-        character(*), intent(in), optional :: lineStyle
-                        !! Style for xy lines ( '-' = on, '' = off )
+        real(wp), dimension(:), intent(in) :: x     !! x-coordinates of data
+        real(wp), dimension(:), intent(in) :: y     !! y-coordinates of data
+        real(wp), dimension(:, :), intent(in) :: z  !! Data for contouring
+        integer, intent(in), optional :: N          !! Number of levels to use in surface colors
+        character(*), intent(in), optional :: lineStyle     !! Style for xy lines ( '-' = on, '' = off )
 
         real(pp), dimension(:), allocatable :: xl, yl
         real(pp), dimension(:, :), allocatable :: zl
@@ -993,16 +872,12 @@ contains
         call resetPen()
     end subroutine surface
 
+    !> Plot a 3d wireframe
     subroutine wireframe(x, y, z, lineColor)
-                !! Plot a 3d wireframe
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-coordinates of data
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-coordinates of data
-        real(wp), dimension(:, :), intent(in) :: z
-                        !! Data for contouring
-        character(*), intent(in), optional :: lineColor
-                        !! Color of contour lines
+        real(wp), dimension(:), intent(in) :: x     !! x-coordinates of data
+        real(wp), dimension(:), intent(in) :: y     !! y-coordinates of data
+        real(wp), dimension(:, :), intent(in) :: z  !! Data for contouring
+        character(*), intent(in), optional :: lineColor     !! Color of contour lines
 
         real(pp), dimension(:), allocatable :: xl, yl
         real(pp), dimension(:, :), allocatable :: zl
@@ -1021,16 +896,12 @@ contains
         call resetPen()
     end subroutine wireframe
 
+    !> Plot filled contours
     subroutine contourf(x, y, z, N)
-                !! Plot filled contours
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-coordinates of data
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-coordinates of data
-        real(wp), dimension(:, :), intent(in) :: z
-                        !! Data for contouring
-        integer, intent(in), optional :: N
-                        !! Number of levels to use in contour
+        real(wp), dimension(:), intent(in) :: x     !! x-coordinates of data
+        real(wp), dimension(:), intent(in) :: y     !! y-coordinates of data
+        real(wp), dimension(:, :), intent(in) :: z  !! Data for contouring
+        integer, intent(in), optional :: N          !! Number of levels to use in contour
 
         real(pp), dimension(:), allocatable :: xl, yl
         real(pp), dimension(:, :), allocatable :: zl
@@ -1059,31 +930,22 @@ contains
         call resetPen()
     end subroutine contourf
 
+    !> Plot vectors
     subroutine quiver(x, y, u, v, s, c, scaling, lineColor, lineStyle, lineWidth)
-                !! Plot vectors
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-positions of vectors
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-positions of vectors
-        real(wp), dimension(:, :), intent(in) :: u
-                        !! u-components of vectors
-        real(wp), dimension(:, :), intent(in) :: v
-                        !! v-components of vectors
-        real(wp), dimension(:, :), intent(in), optional :: s
-                        !! Scale of vectors
-        real(wp), dimension(:, :), intent(in), optional :: c
-                        !! Color values for vectors
+        real(wp), dimension(:), intent(in) :: x     !! x-positions of vectors
+        real(wp), dimension(:), intent(in) :: y     !! y-positions of vectors
+        real(wp), dimension(:, :), intent(in) :: u  !! u-components of vectors
+        real(wp), dimension(:, :), intent(in) :: v  !! v-components of vectors
+        real(wp), dimension(:, :), intent(in), optional :: s    !! Scale of vectors
+        real(wp), dimension(:, :), intent(in), optional :: c    !! Color values for vectors
         real(wp), intent(in), optional :: scaling
                         !! Scaling of vectors
                         !! < 0 = Automatic, then scaled
                         !!   0 = Automatic
                         !! > 0 = Directly scaled
-        character(*), intent(in), optional :: lineColor
-                        !! Color of vectors
-        character(*), intent(in), optional :: lineStyle
-                        !! Style of vectors' lines
-        real(wp), optional :: lineWidth
-                        !! Width of vectors' lines
+        character(*), intent(in), optional :: lineColor     !! Color of vectors
+        character(*), intent(in), optional :: lineStyle     !! Style of vectors' lines
+        real(wp), optional :: lineWidth                     !! Width of vectors' lines
 
         real(pp), dimension(:), allocatable :: xl, yl
         real(pp), dimension(:, :), allocatable :: ul, vl, sl
@@ -1137,24 +999,16 @@ contains
         call resetPen()
     end subroutine quiver
 
+    !> Create a bar graph
     subroutine bar(x, y, c, relWidth, fillColor, fillPattern, lineColor, lineWidth)
-                !! Create a bar graph
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-positions of the bars' centers
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-positions of the bars' tops
-        real(wp), dimension(:), intent(in), optional :: c
-                        !! Color scale for bars
-        real(wp), intent(in), optional :: relWidth
-                        !! Relative width of bars (default 0.8)
-        character(*), intent(in), optional :: fillColor
-                        !! Color of bar fills
-        character(*), intent(in), optional :: fillPattern
-                        !! Pattern of bar fills
-        character(*), intent(in), optional :: lineColor
-                        !! Color of lines around bars
-        real(wp), optional :: lineWidth
-                        !! Width of lines around bars
+        real(wp), dimension(:), intent(in) :: x     !! x-positions of the bars' centers
+        real(wp), dimension(:), intent(in) :: y     !! y-positions of the bars' tops
+        real(wp), dimension(:), intent(in), optional :: c   !! Color scale for bars
+        real(wp), intent(in), optional :: relWidth  !! Relative width of bars (default 0.8)
+        character(*), intent(in), optional :: fillColor     !! Color of bar fills
+        character(*), intent(in), optional :: fillPattern   !! Pattern of bar fills
+        character(*), intent(in), optional :: lineColor     !! Color of lines around bars
+        real(wp), optional :: lineWidth             !! Width of lines around bars
 
         real(pp), dimension(4) :: xl, yl
         real(pp), dimension(2) :: cb
@@ -1188,24 +1042,16 @@ contains
         call resetPen()
     end subroutine bar
 
+    !> Create a horizontal bar graph
     subroutine barh(y, x, c, relWidth, fillColor, fillPattern, lineColor, lineWidth)
-                !! Create a horizontal bar graph
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-positions of the bars' centers
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-positions of the bars' tops
-        real(wp), dimension(:), intent(in), optional :: c
-                        !! Color scale for bars
-        real(wp), intent(in), optional :: relWidth
-                        !! Relative width of bars
-        character(*), intent(in), optional :: fillColor
-                        !! Color of bar fills
-        character(*), intent(in), optional :: fillPattern
-                        !! Pattern of bar fills
-        character(*), intent(in), optional :: lineColor
-                        !! Color of lines around bars
-        real(wp), optional :: lineWidth
-                        !! Width of lines around bars
+        real(wp), dimension(:), intent(in) :: y     !! y-positions of the bars' centers
+        real(wp), dimension(:), intent(in) :: x     !! x-positions of the bars' tops
+        real(wp), dimension(:), intent(in), optional :: c   !! Color scale for bars
+        real(wp), intent(in), optional :: relWidth  !! Relative width of bars
+        character(*), intent(in), optional :: fillColor     !! Color of bar fills
+        character(*), intent(in), optional :: fillPattern   !! Pattern of bar fills
+        character(*), intent(in), optional :: lineColor     !! Color of lines around bars
+        real(wp), optional :: lineWidth             !! Width of lines around bars
 
         real(pp), dimension(4) :: xl, yl
         real(pp), dimension(2) :: cb
@@ -1235,8 +1081,10 @@ contains
         call resetPen()
     end subroutine barh
 
+    !> Fill space between two lines
+    !>
+    !> TODO: describe the arguments
     subroutine fillBetween(x, y1, y0, fillColor, fillPattern, lineWidth)
-                !! Fill space between two lines
         real(wp), dimension(:), intent(in) :: x
         real(wp), dimension(:), intent(in) :: y1
         real(wp), dimension(:), intent(in), optional :: y0
@@ -1265,8 +1113,10 @@ contains
         call resetPen()
     end subroutine fillBetween
 
+    !> Fill space between two lines
+    !>
+    !> TODO: describe the arguments
     subroutine fillBetweenx(y, x1, x0, fillColor, fillPattern, lineWidth)
-                !! Fill space between two lines
         real(wp), dimension(:), intent(in) :: y
         real(wp), dimension(:), intent(in) :: x1
         real(wp), dimension(:), intent(in), optional :: x0
@@ -1295,22 +1145,15 @@ contains
         call resetPen()
     end subroutine fillBetweenx
 
+    !> Plot error bars for a set of data points
     subroutine errorbar(x, y, xerr, yerr, lineColor, lineStyle, lineWidth)
-                !! Plot error bars for a set of data points
-        real(wp), dimension(:), intent(in) :: x
-                        !! x-data for plot
-        real(wp), dimension(:), intent(in) :: y
-                        !! y-data for plot
-        real(wp), dimension(:), intent(in), optional :: xerr
-                        !! x-data error for plot
-        real(wp), dimension(:), intent(in), optional :: yerr
-                        !! y-data error for plot
-        character(*), intent(in), optional :: lineColor
-                        !! Color of line
-        character(*), intent(in), optional :: lineStyle
-                        !! Style of line; '' for no line
-        real(wp), intent(in), optional :: lineWidth
-                        !! Width of line
+        real(wp), dimension(:), intent(in) :: x     !! x-data for plot
+        real(wp), dimension(:), intent(in) :: y     !! y-data for plot
+        real(wp), dimension(:), intent(in), optional :: xerr    !! x-data error for plot
+        real(wp), dimension(:), intent(in), optional :: yerr    !! y-data error for plot
+        character(*), intent(in), optional :: lineColor         !! Color of line
+        character(*), intent(in), optional :: lineStyle         !! Style of line; '' for no line
+        real(wp), intent(in), optional :: lineWidth             !! Width of line
 
         real(pp), dimension(:), allocatable :: xl, yl
         real(pp), dimension(:), allocatable :: xll, xlh
@@ -1338,12 +1181,9 @@ contains
         call resetPen()
     end subroutine
 
-    !========================!
-    != Drawing Pen Routines =!
-    !========================!
-
+    ! Drawing Pen Routines
+    !> Reset pen to default state
     subroutine resetPen
-                !! Reset pen to default state
 
         call setColor('')
         call setLineStyle('')
@@ -1359,18 +1199,16 @@ contains
         call plwidth(real(lineWidth, pp))
     end subroutine setLineWidth
 
+    !> Set the current pen line style
     subroutine setLineStyle(style)
-                !! Set the current pen line style
-        character(*), intent(in) :: style
-                        !! Style to set
+        character(*), intent(in) :: style   !! Style to set
 
         call pllsty(getLineStyleCode(style))
     end subroutine setLineStyle
 
+    !> Return the code for a line style
     function getLineStyleCode(style) result(code)
-                !! Return the code for a line style
-        character(*), intent(in) :: style
-                        !! Style desired
+        character(*), intent(in) :: style   !! Style desired
         integer :: code
 
         select case (style)
@@ -1385,10 +1223,9 @@ contains
         end select
     end function getLineStyleCode
 
+    !> Return the code for a symbol style
     function getSymbolCode(style) result(code)
-                !! Return the code for a symbol style
-        character(*), intent(in) :: style
-                        !! Style desired
+        character(*), intent(in) :: style   !! Style desired
         character(32) :: code
 
         select case (style)
@@ -1447,10 +1284,9 @@ contains
         end select
     end function getFillCode
 
+    !> Set the current pen color
     subroutine setColor(color)
-                !! Set the current pen color
-        character(*), intent(in) :: color
-                        !! Name of color to set
+        character(*), intent(in) :: color   !! Name of color to set
 
         integer :: ios
         real(pp) :: v
@@ -1503,32 +1339,24 @@ contains
         code = code - 1
     end function getColorCode
 
-    !===========================!
-    != Library Status Routines =!
-    !===========================!
+    ! Library Status Routines
 
+    !> Setup PlPlot library, optionally overriding defaults
     subroutine setup(device, fileName, fontScaling, whiteOnBlack, transparent, colormap, figSize)
-                !! Setup PlPlot library, optionally overriding defaults
-        character(*), intent(in), optional :: device
-                        !! Output device to use
-                        !!
-                        !! * qtwidget
-                        !! * svgqt
-                        !! * pngqt
+        character(*), intent(in), optional :: device    !! Output device to use
+                                                        !!
+                                                        !! * qtwidget
+                                                        !! * svgqt
+                                                        !! * pngqt
         character(*), intent(in), optional :: fileName
                         !! Name of file(s) to write to
                         !!
                         !! The text `%n` will be replaced with the figure number
-        real(wp), intent(in), optional :: fontScaling
-                        !! Font scaling relative to default value
-        logical, intent(in), optional :: whiteOnBlack
-                        !! Default foreground and background colors
-        logical, intent(in), optional :: transparent
-                        !! Transparent background
-        character(*), intent(in), optional :: colormap
-                        !! Colormap to use
-        integer, dimension(2), intent(in), optional :: figSize
-                        !! Size of figures to produce in pixels
+        real(wp), intent(in), optional :: fontScaling   !! Font scaling relative to default value
+        logical, intent(in), optional :: whiteOnBlack   !! Default foreground and background colors
+        logical, intent(in), optional :: transparent    !! Transparent background
+        character(*), intent(in), optional :: colormap  !! Colormap to use
+        integer, dimension(2), intent(in), optional :: figSize  !! Size of figures to produce in pixels
 
         character(64) :: bufx, bufy
         integer :: ios
@@ -1574,31 +1402,28 @@ contains
         call resetPen()
     end subroutine setup
 
+    !> Show the plots end finialize the PlPlot library
     subroutine show
-                !! Show the plots end finialize the PlPlot library
         if (.not. didShow) then
             call plend()
             didShow = .true.
         end if
     end subroutine show
 
-    !======================!
-    != Color Map Routines =!
-    !======================!
-
+    ! Color Map Routines
+    !> Setup the indexed colors
     subroutine setIndexedColors
-                !! Setup the indexed colors
         integer, dimension(8, 3) :: rgb
         real(plflt), dimension(8) :: a
 
         rgb(getColorCode('w') + 1, :) = [255, 255, 255] ! White
-        rgb(getColorCode('k') + 1, :) = [0, 0, 0] ! Black
-        rgb(getColorCode('r') + 1, :) = [255, 0, 0] ! Red
-        rgb(getColorCode('g') + 1, :) = [0, 255, 0] ! Green
-        rgb(getColorCode('b') + 1, :) = [0, 0, 255] ! Blue
-        rgb(getColorCode('c') + 1, :) = [0, 255, 255] ! Cyan
-        rgb(getColorCode('m') + 1, :) = [255, 0, 255] ! Magenta
-        rgb(getColorCode('y') + 1, :) = [255, 255, 0] ! Yellow
+        rgb(getColorCode('k') + 1, :) = [0, 0, 0]       ! Black
+        rgb(getColorCode('r') + 1, :) = [255, 0, 0]     ! Red
+        rgb(getColorCode('g') + 1, :) = [0, 255, 0]     ! Green
+        rgb(getColorCode('b') + 1, :) = [0, 0, 255]     ! Blue
+        rgb(getColorCode('c') + 1, :) = [0, 255, 255]   ! Cyan
+        rgb(getColorCode('m') + 1, :) = [255, 0, 255]   ! Magenta
+        rgb(getColorCode('y') + 1, :) = [255, 255, 0]   ! Yellow
 
         a = 1.0_plflt
         if (transparentBackground) a(1) = 0.0_wp
@@ -1606,10 +1431,9 @@ contains
         call plscmap0a(rgb(:, 1), rgb(:, 2), rgb(:, 3), a)
     end subroutine setIndexedColors
 
+    !> Set the continuous colormap
     subroutine setColormap(colormap)
-                !! Set the continuous colormap
-        character(*), intent(in) :: colormap
-                        !! Name of colormap to use
+        character(*), intent(in) :: colormap    !! Name of colormap to use
 
         real(pp), dimension(:), allocatable :: i, h, s, v
 
