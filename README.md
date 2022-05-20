@@ -3,10 +3,9 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a6d36a1c-03a6-4a41-b069-4fd65e3c7673/deploy-status)](https://app.netlify.com/sites/easy-plplot-api/deploys)
 
 `easy_plplot` is a wrapper for PlPlot inspired by the interface of 
-matplotlib. It is intended to fill the need for rapid feedback while 
+`matplotlib`. It is intended to fill the need for rapid feedback while 
 developing numerical simulations, and does not replace more 
-sophisticated packages such as
-matplotlib or even direct use of PlPlot.
+sophisticated packages such as matplotlib or even direct use of PlPlot.
 
 While it is possible that the output from `easy_plplot` may be considered 
 as publication quality, no assertion is made along those lines. This 
@@ -27,9 +26,11 @@ The following combinations are supported:
 
 ### Dependencies
 
-- Plplot
-- libgd
-- [Fortran-lang/fpm](https://github.com/fortran-lang/fpm)
+- [Plplot 5.15.0](https://sourceforge.net/projects/plplot/files/plplot/5.15.0%20Source/)
+- libgd 2.3.2
+- [Fortran-lang/fpm](https://github.com/fortran-lang/fpm) 0.5.0
+
+PS: It seems that the `plplot-fortran` of the `debian` and `ubuntu` distribution warehouses does not take into account the `*.mod` files, so it is best to use `cmake` to install plplot by yourself.
 
 #### Build Environment in MSYS2
 

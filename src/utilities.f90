@@ -101,8 +101,8 @@ contains
 
     !> Return an array of evenly-spaced values
     function linspace(l, h, N) result(o)
-        real(wp), intent(in) :: l   !! Low-bound for values
-        real(wp), intent(in) :: h   !! High-bound for values
+        real(wp), intent(in) :: l           !! Low-bound for values
+        real(wp), intent(in) :: h           !! High-bound for values
         integer, intent(in), optional :: N  !! Number of values (default 20)
         real(wp), dimension(:), allocatable :: o
 

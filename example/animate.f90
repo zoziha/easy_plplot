@@ -9,7 +9,7 @@ program animate
     real(wp), parameter :: pi = acos(-1.0d0)
 
     N = 100
-    M = 1000
+    M = 50
 
     x = linspace(0.0_wp, PI, N)
     t = linspace(0.0_wp, 10.0_wp, M)

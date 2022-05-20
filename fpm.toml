@@ -1,5 +1,5 @@
 name = "easy_plplot"
-version = "0.1.0"
+version = "0.1.1"
 maintainer = "zuo.zhihua@qq.com"
 license = "BSD-3-Clause"
 keywords = ["plotting", "plplot"]
@@ -9,4 +9,4 @@ link = ["plplot", "plplotfortran"]
 external-modules = ["plplot", "plplotfortran"]
 
 [dev-dependencies]
-test-drive = { git="https://github.com/fortran-lang/test-drive", tag="v0.4.0" }
+test-drive = { git = "https://github.com/fortran-lang/test-drive", tag = "v0.4.0" }
